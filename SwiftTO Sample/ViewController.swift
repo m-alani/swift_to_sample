@@ -59,14 +59,6 @@ struct ApiUser: Codable {
     let phone: String
 }
 
-struct ApiResponseInfo: Codable {
-    let seed: String
-    let results: Int
-    let page: Int
-    let version: String
-}
-
 struct ApiResponse: Codable {
     let results: [ApiUser]
-    let info: ApiResponseInfo
 }
