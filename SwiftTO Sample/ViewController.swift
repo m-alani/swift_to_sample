@@ -17,13 +17,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let url = URL(string: "https://randomuser.me/api/?inc=name,phone&nat=ca&results=20") else { return }
-        let networkCall = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+        let networkCall = URLSession.shared.dataTask(with: url) { [weak self] (data, _, error) in
             guard let strongSelf = self,
-                let httpURLResponse = response as? HTTPURLResponse,
-                httpURLResponse.statusCode == 200,
                 let unwrappedData = data,
-                error == nil
-                else {
+                error == nil else {
                     print("Something went wrong fetching users: \(error.debugDescription)")
                     return
             }
