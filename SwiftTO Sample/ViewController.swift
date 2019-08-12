@@ -49,19 +49,11 @@ struct ApiUser: Codable {
     let phone: String
 }
 
-struct ApiResponseInfo: Codable {
-    let seed: String
-    let results: Int
-    let page: Int
-    let version: String
-}
-
 struct ApiResponse: Codable {
     let results: [ApiUser]
-    let info: ApiResponseInfo
 }
 
-struct User {
+struct User: Equatable{
     let name: String
     let phone: String
     
@@ -81,15 +73,15 @@ struct User {
 
 typealias FetchUsersCompletionHandler = ([User]) -> Void
 
-func fetchUsers(from apiUrlString: String, completionHandler: @escaping FetchUsersCompletionHandler) {
+func fetchUsers(from apiUrlString: String,
+                using session: URLSession = URLSession.shared,
+                completionHandler: @escaping FetchUsersCompletionHandler) {
     guard let url = URL(string: apiUrlString) else { return }
-    let networkCall = URLSession.shared.dataTask(with: url) { (data, response, error) in
+    
+    let networkCall = session.dataTask(with: url) { (data, _ , error) in
         // Make sure everything went well with the network fetch
-        guard let httpURLResponse = response as? HTTPURLResponse,
-            httpURLResponse.statusCode == 200,
-            let unwrappedData = data,
-            error == nil
-            else {
+        guard let unwrappedData = data,
+            error == nil else {
                 completionHandler([User]()) // something went wrong! return an empty array
                 return
         }
