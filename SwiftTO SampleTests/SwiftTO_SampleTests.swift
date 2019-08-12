@@ -19,16 +19,22 @@ class SwiftTO_SampleTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testUserGenerationFromApiUser() {
+        let apiUser1 = ApiUser(name: ApiName(first: "John", last: "doe"), phone: "1234567890")
+        let apiUser2 = ApiUser(name: ApiName(first: "jane", last: ""), phone: "1234567890123")
+        let apiUser3 = ApiUser(name: ApiName(first: "Jimmy 🎸", last: "Hendrix"), phone: "N/A")
+        
+        let user1 = User(fromNetworkUser: apiUser1)
+        let user2 = User(fromNetworkUser: apiUser2)
+        let user3 = User(fromNetworkUser: apiUser3)
+        
+        XCTAssert(user1.name == "John Doe")
+        XCTAssert(user1.phone == "1234567890")
+        
+        XCTAssert(user2.name == "Jane ")
+        XCTAssert(user2.phone == "1234567890123")
+        
+        XCTAssert(user3.name == "Jimmy 🎸 Hendrix")
+        XCTAssert(user3.phone == "N/A")
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
