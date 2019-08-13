@@ -19,9 +19,9 @@ class SwiftTO_SampleTests: XCTestCase {
         let apiUser2 = ApiUser(name: ApiName(first: "jane", last: ""), phone: "1234567890123")
         let apiUser3 = ApiUser(name: ApiName(first: "Jimmy 🎸", last: "Hendrix"), phone: "N/A")
         
-        let user1 = User(fromNetworkUser: apiUser1)
-        let user2 = User(fromNetworkUser: apiUser2)
-        let user3 = User(fromNetworkUser: apiUser3)
+        let user1 = createUser(from: apiUser1)
+        let user2 = createUser(from: apiUser2)
+        let user3 = createUser(from: apiUser3)
         
         XCTAssert(user1.name == "John Doe")
         XCTAssert(user1.phone == "1234567890")

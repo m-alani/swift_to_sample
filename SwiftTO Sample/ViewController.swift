@@ -11,12 +11,13 @@ import UIKit
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var users = [User]()
+    let USERS_URL = "https://randomuser.me/api/?inc=name,phone&nat=ca&results=20"
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchUsers(from: "https://randomuser.me/api/?inc=name,phone&nat=ca&results=20") { [weak self] users in
+        fetchUsers(from: USERS_URL) { [weak self] users in
             self?.users = users
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
@@ -56,17 +57,6 @@ struct ApiResponse: Codable {
 struct User: Equatable{
     let name: String
     let phone: String
-    
-    init(name: String, phone: String) {
-        self.name = name
-        self.phone = phone
-    }
-    
-    /// Initialize a `User` object from an `ApiUser` object, parsing the first & last name together with a space in between
-    init(fromNetworkUser user: ApiUser) {
-        self.name = "\(user.name.first.capitalized) \(user.name.last.capitalized)"
-        self.phone = user.phone
-    }
 }
 
 // MARK: Network
@@ -83,14 +73,22 @@ func fetchUsers(from apiUrlString: String,
         guard let unwrappedData = data,
             error == nil else {
                 completionHandler([User]()) // something went wrong! return an empty array
-                return
-        }
+                return }
         
         // Decode retrived data
         let apiResponse = try? JSONDecoder().decode(ApiResponse.self, from: unwrappedData)
         if let unwrappedApiResponse = apiResponse {
-            completionHandler(unwrappedApiResponse.results.map({ User(fromNetworkUser: $0) })) // Map an array of `User`s out of the array of `ApiUser`s we received
+            completionHandler(unwrappedApiResponse.results.map({ createUser(from: $0) })) // Map an array of `User`s out of the array of `ApiUser`s we received
         }
     }
     networkCall.resume()
+}
+
+// MARK: Helpers
+
+/// Initialize a `User` object from an `ApiUser` object, parsing the first & last name together with a space in between
+func createUser(from apiUser: ApiUser) -> User {
+    let user = User(name: "\(apiUser.name.first.capitalized) \(apiUser.name.last.capitalized)",
+        phone: apiUser.phone)
+    return user
 }
